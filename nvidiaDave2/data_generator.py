@@ -22,6 +22,29 @@ class generator:
                     steering = dict(hf[frame].attrs)['steering']
                     yield (img, steering)
 
+    def calculate_all_picture(self):
+        num = 0
+        for file in self.files:
+            with h5py.File(file, 'r+') as hf:
+                num += len(hf.keys())
+                print(num)
+                return num
+
+
+class generator2:
+    def __init__(self, files):
+        self.files = files
+
+    def __call__(self):
+        file = self.files[0]
+        with h5py.File(file, 'r') as hf:
+            fr = 'frame_0000000123'
+            img = hf[fr]['camera_00000']['image']
+            img = convert_to_normal_picture(img)
+            img = convert_to_nvidia_size(img)
+            steering = dict(hf[fr].attrs)['steering']
+            yield (img, steering)
+
 
 def convert_to_nvidia_size(img, width=200, height=66):
     orig_height = img.shape[0]
